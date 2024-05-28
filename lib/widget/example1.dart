@@ -45,17 +45,29 @@ class CustomDualYAxisChart extends StatelessWidget {
             LineChart(
               LineChartData(
                 lineTouchData: LineTouchData(
+                  distanceCalculator:
+                      (Offset touchPoint, Offset spotPixelCoordinates) =>
+                          (touchPoint - spotPixelCoordinates).distance,
                   touchTooltipData: LineTouchTooltipData(
-                    // tooltipBgColor: Colors.blueAccent,
-                    getTooltipItems: (List<LineBarSpot> touchedSpots) {
-                      return touchedSpots.map((LineBarSpot touchedSpot) {
-                        return LineTooltipItem(
-                          '${touchedSpot.x}, ${touchedSpot.y}',
-                          const TextStyle(color: Colors.white),
-                        );
-                      }).toList();
-                    },
-                  ),
+                      getTooltipItems: (List<LineBarSpot> spots) {
+                    return spots.asMap().entries.map((e) {
+                      int index = e.key;
+                      if (index != 0) {
+                        return null;
+                      }
+                      LineBarSpot spot = e.value;
+                      return LineTooltipItem(
+                        spot.y.toString(),
+                        TextStyle(
+                          color: spot.bar.gradient?.colors.first ??
+                              spot.bar.color ??
+                              Colors.blueGrey,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 14,
+                        ),
+                      );
+                    }).toList();
+                  }),
                 ),
                 titlesData: FlTitlesData(
                   leftTitles: AxisTitles(
